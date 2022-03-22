@@ -13,7 +13,6 @@ exports.createUser = (req, res, next) => {
     }
 
     User.create (newUser,(err, user) => {
-        console.log("XXXXXXXXXXXXXX", err);
         if (err && err.code == 11000) return res.status(409).send('Email already exist');
         if (err) return res.status(500).send('Server Error');
         const expiresIn = 24 * 60 * 60;
@@ -43,11 +42,18 @@ exports.loginUser = (req, res, next) => {
             //email no existe
             res.status(409).send({message: 'Something is wrong'});
         } else {
-            const resultPassword = userData.password;
+            const resultPassword = bcrypt.compareSync(userData.password, user.password);
             if (resultPassword){
                 const expiresIn = 24 * 60 * 60;
                 const accesToken = jwt.sign({id: user.id}, SECRET_KEY, {expiresIn: expiresIn});
-                res.send({userData});
+                
+                const dataUser = {
+                    name: user.name,
+                    email: user.email,
+                    accesToken: accesToken,
+                    expiresIn: expiresIn
+                }
+                res.send({dataUser});
             } else {
                 //password incorrecto
                 res.send(409).send({message: 'Something is wrong'});
