@@ -10,6 +10,15 @@ DB();
 
 const app = express();
 const router = express.Router();
+
+const bodyParser = require('body-parser');
+const bodyParserJSON = bodyParser.json();
+const bodyParserURLEncode = bodyParser.urlencoded({extended: true});
+
+app.use(bodyParserJSON);
+app.use(bodyParserURLEncode);
+
+
 app.use('/api', router);
 authRoutes(router);
 

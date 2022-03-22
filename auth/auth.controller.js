@@ -9,7 +9,7 @@ exports.createUser = (req, res, next) => {
     const newUser = {
         name: req.body.name,
         email: req.body.email,
-        password: req.body.password,
+        password: bcrypt.hashSync(req.body.password)
     }
 
     User.create (newUser,(err, user) => {
@@ -19,9 +19,14 @@ exports.createUser = (req, res, next) => {
             SECRET_KEY, {
                 expiresIn: expiresIn
             });
-
+        const dataUser = {
+            name: user.name,
+            email: user.email,
+            accesToken: accesToken,
+            expiresIn: expiresIn
+        }
             //response
-            res.send({user});
+            res.send({dataUser});
     });
 }
 
