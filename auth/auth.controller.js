@@ -13,6 +13,8 @@ exports.createUser = (req, res, next) => {
     }
 
     User.create (newUser,(err, user) => {
+        console.log("XXXXXXXXXXXXXX", err);
+        if (err && err.code == 11000) return res.status(409).send('Email already exist');
         if (err) return res.status(500).send('Server Error');
         const expiresIn = 24 * 60 * 60;
         const accesToken = jwt.sign({id: user.id},
